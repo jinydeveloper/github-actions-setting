@@ -6,5 +6,5 @@ jobs:
         runs-on: ubuntu-latest
         steps:
         # name은 생략해도 됨
-            - name: step1
-                run: echo "Hello, World!"
+        - name: step1
+          run: echo Hello, World!

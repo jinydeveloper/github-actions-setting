@@ -1,6 +1,9 @@
 # 
 name: pull-request-workflow
-on: pull_request
+on: 
+  pull_request:
+    # 이벤트가 특정 타입에서만 발생하도록 세부 설정 추가
+    types: [opened]
 
 
 jobs:

@@ -1,0 +1,17 @@
+# 
+name: pull-request-workflow
+on: pull_request
+
+
+jobs:
+    pull-request-job:
+        runs-on: ubuntu-latest
+        steps:
+        # name은 생략해도 됨
+        - name: step1
+          run: echo Hello, World!
+        - name: step2
+        # | 사용 시 멀티라인 문자열을 사용할 수 있음
+          run: |
+            echo hello world
+            echo github actions

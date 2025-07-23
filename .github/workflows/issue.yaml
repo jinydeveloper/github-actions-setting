@@ -1,0 +1,27 @@
+# issue
+# 버그, 기능 요청, 질문, 논의 등 추적 및 관리
+# 프로젝트의 버그나 기능 개발 등의 진행 상황 파악
+
+# issue가 등록됐을 때 트리거 발생하는 워크플로우
+
+# issue가 탭에서 안 보이는 경우
+# settings > Features > Issues 체크
+
+
+name: issue-workflow
+on: 
+  issue:
+    types: [opened]
+
+jobs:
+    pull-request-job:
+        runs-on: ubuntu-latest
+        steps:
+        # name은 생략해도 됨
+        - name: step1
+          run: echo Hello, World!
+        - name: step2
+        # | 사용 시 멀티라인 문자열을 사용할 수 있음
+          run: |
+            echo hello world
+            echo github actions

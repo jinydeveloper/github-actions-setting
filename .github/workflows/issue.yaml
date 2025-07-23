@@ -3,9 +3,17 @@
 # 프로젝트의 버그나 기능 개발 등의 진행 상황 파악
 
 # issue가 등록됐을 때 트리거 발생하는 워크플로우
+# default branch에 파일이 존재할 때 사용가능
+
+# default branch 확인 방법(변경도 가능)
+# settings > Default branch
+
+# activity type 확인
+# https://docs.github.com/ko/actions/reference/events-that-trigger-workflows#issues
 
 # issue가 탭에서 안 보이는 경우
 # settings > Features > Issues 체크
+
 
 
 name: issue-workflow

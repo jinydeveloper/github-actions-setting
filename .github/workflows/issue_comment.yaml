@@ -1,0 +1,29 @@
+# 코멘트
+# isue
+# pull request
+
+# default branch에서만 동작
+
+# 1. pull request에 comment 다는 경우 트리거 발생
+
+
+
+# 2. issue에 comment 다는 경우 트리거 발생
+
+name: issue-comment-workflow
+on: issue_comment
+
+jobs:
+  pr-comment:
+    if: ${{ github.event.issue.pull_request}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: pr comment
+        run: echo ${{ github.event.issue.pull_request}}
+  
+  issue-comment:
+    if: ${{ !github.event.issue.pull_request}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: issue comment
+        run: echo ${{ github.event.issue.pull_request}}

@@ -5,9 +5,6 @@
 # default branch에서만 동작
 
 # 1. pull request에 comment 다는 경우 트리거 발생
-
-
-
 # 2. issue에 comment 다는 경우 트리거 발생
 
 name: issue-comment-workflow
@@ -27,3 +24,8 @@ jobs:
     steps:
       - name: issue comment
         run: echo ${{ github.event.issue.pull_request}}
+
+
+# schedule
+# 5분 간격, 30분 간격의 작업은 드랍될 가능성 있음
+# 정해진 시간에 꼭 실행되어야할 작업이라면 깃헙액션 스케줄링을 통한 작업은 적합하지 않음

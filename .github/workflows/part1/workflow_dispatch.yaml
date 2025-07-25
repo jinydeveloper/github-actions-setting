@@ -5,6 +5,9 @@
 
 # 인풋값을 넣을 수 있음
 
+# yaml 파일 업로드, actions 탭에서 사이드에 workflow-dispatch 클릭
+# "Run workflow" 버튼을 클릭하여 인풋값을 넣고 실행
+
 name: workflow-dispatch
 on:
   workflow_dispatch:

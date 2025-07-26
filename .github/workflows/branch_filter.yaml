@@ -1,0 +1,24 @@
+# 이벤트가 특정 조건에 부합할 때 실행
+# 워크플로우 실행을 더 효과적으로 제어
+# branch, path, tag
+
+#  1. 특정 branch에서 실행 - Branch Filter
+#  ex) dev, master branch 중에서
+      # master branch 로 push해야만 실행
+
+#  2. 특정 path에서 실행
+
+
+#  3. 특정 tag에서 실행
+
+name: branch-Filter
+on:
+  push:
+    branches: ["dev"]
+
+jobs:
+  branch-filter:
+    runs-on: ubuntu-latest
+    steps:
+    - name: echo
+      run: echo hello

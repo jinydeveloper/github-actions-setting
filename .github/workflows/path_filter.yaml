@@ -8,6 +8,8 @@ on:
     paths:
     # 아래 경로에 변경이 발생 시 트리거 실행
     - '.github/workflows/part1/*'
+    # ! 사용 시 해당 경로를 제외하겠다는 의미표시
+    - '!.github/workflows/part1/push.yaml'
 
 jobs:
   path-filter:
@@ -15,4 +17,3 @@ jobs:
     steps:
     - name: echo hello
       run: echo hello
-      

@@ -16,19 +16,19 @@ jobs:
     steps:
     # checkout 사용 
     - name: checkout
-      uses: action/checkout@v4
+      uses: actions/checkout@v4
     # 18버전의 노드를 install
     - name: setup-node
-      uses: action/setup-node@v3
+      uses: actions/setup-node@v3
       with:
         node-version: 18
     - name: Cache Node.js modules
-      uses: action/cache@v3
+      uses: actions/cache@v3
       with:
         # 캐싱할 경로 > .npm 으로 지정
         path: ~/.npm
         # runner.os = github 에서 운영하는 os
-        key: ${{ runner.os }}-node-${{ hash Files('**/package-lock.json') }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
     # my-app 디렉토리에서 필요한 디펜던시를 설치

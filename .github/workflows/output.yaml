@@ -30,14 +30,14 @@ jobs:
   create-output:
     runs-on: ubuntu-latest
     steps:
-    -name: echo output
-    id: check-output
-    run: |
-    # key는 test , value는 hello 라는 아웃풋 생성
-      echo "test=hello" >> $GITHUB_OUTPUT
-    -name: check output
-    run: |
-      echo ${{ steps.check-output.outputs.test}}
+    - name: echo output
+      id: check-output
+      # key는 test , value는 hello 라는 아웃풋 생성
+      run: | 
+        echo "test=hello" >> $GITHUB_OUTPUT
+    - name: check output
+      run: |
+        echo ${{ steps.check-output.outputs.test}}
 
 
 

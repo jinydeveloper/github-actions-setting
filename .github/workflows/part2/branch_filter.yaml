@@ -7,8 +7,6 @@
       # master branch 로 push해야만 실행
 
 #  2. 특정 path에서 실행
-
-
 #  3. 특정 tag에서 실행
 
 name: branch-Filter

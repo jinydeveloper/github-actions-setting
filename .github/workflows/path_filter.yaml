@@ -1,0 +1,18 @@
+# 2. 특정 path에서 실행
+# 특정 경로에서 실행
+# my-app이라는 디렉토리 내에 파일이 업데이트될 때만 실행
+
+name: path-filter
+on:
+  push:
+    paths:
+    # 아래 경로에 변경이 발생 시 트리거 실행
+    - '.github/workflows/part1/*'
+
+jobs:
+  path-filter:
+    runs-on: ubuntu-latest
+    steps:
+    - name: echo hello
+      run: echo hello
+      

@@ -1,0 +1,20 @@
+#  3. 특정 tag에서 실행
+# ex) v1.0.0으로 태깅해야 실행
+# push event에서만 사용 가능
+
+# 태그를 사용하는 방법
+# git tag <tag-name>
+
+name: tag-filter
+on:
+  push:
+    tags:
+    #  v1.0.0 or v2.2.2 식의 표기는 실행, v1.0 or 1.0.0은 실행안함
+    - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  tag-filter:
+    run-on: ubuntu-latest
+    steps:
+    - name: echo
+      run: echo hello

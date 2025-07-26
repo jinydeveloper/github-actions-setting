@@ -31,12 +31,12 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
-    # my-app 디렉토리에서 필요한 디펜던시를 설치
+    # my-app디렉토리에서 필요한 디펜던시를 설치
     - name: Install dependencies
       run: |
         cd my-app
         npm ci
-    # my-app 디렉토리에서 build 작업을 실행
+    # my-app디렉토리에서 build 작업을 실행
     - name: npm build
       run: |
         cd my-app

@@ -1,0 +1,19 @@
+# 워크플로우를 실행하는 환경에 대한 정보
+
+# 사용하는 이유
+# 더 유연한 워크플로우 만들기 위해
+# ex) github context를 사용해서 조건 설정
+
+# dev branch에 push 이벤트 발생하면, workflow에서 1번 job 실행
+# master branch에 push 이벤트 발생하면, workflow에서 2번 job 실행
+
+name: context
+on: workflow_dispatch
+
+jobs:
+  context:
+    runs-on: ubuntu-latest
+    steps:
+    - name: github context
+      run: echo '${{ toJSON(github) }}'
+  

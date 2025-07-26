@@ -14,7 +14,9 @@
 name: branch-Filter
 on:
   push:
-    branches: ["dev"]
+#     branches: ["dev"]
+#     브랜치 변경
+    branches: ["dev-test"]
 
 jobs:
   branch-filter:

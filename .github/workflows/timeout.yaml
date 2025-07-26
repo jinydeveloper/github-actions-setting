@@ -24,5 +24,7 @@ jobs:
           count=$((count+1))
           sleep 1
         done
+      # 1번째 스텝이 1분내에 마무리되지 않으면 2번째 작업이 실행되지않고 종료
+      timeout-minutes: 1
     - name: echo
       run: echo hello

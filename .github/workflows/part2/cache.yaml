@@ -43,4 +43,4 @@ jobs:
         npm run build
         
 
-
+# my-app 폴더 > App.js 파일 수정 > git push 한 후 git action 실행됐는지 확인

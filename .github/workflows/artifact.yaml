@@ -1,0 +1,41 @@
+# 워크플로우 실행 중 생성된 파일 또는 파일 모음
+# 동일한 워크플로우 내에서 job 사이에 데이터 공유
+# 워크플로우가 종료된 후에도, 데이터 유지(90일)
+
+# 다운로드 가능
+# 깃헙 마켓플레이스에 정의된 공식 액션
+# upload-artifact
+# download-artifact
+
+name: artifact
+on: push
+
+jobs:
+  upload-artifact:
+    runs-on: ubuntu-latest
+    steps:
+    - name: echo
+    # hello.txt 파일을 만들어서 hello-world 단어가 들어가도록
+      run: echo hello-world > hello.txt
+    - name: upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+      # 이름/경로 지정
+        name: artifact-test
+        path: ./hello.txt
+  
+  download-artifact:
+    runs-on: ubuntu-latest
+    # upload-artifact step 성공 시 실행되어야하기에 needs 사용
+    needs: [upload-artifact]
+    steps:
+    - name: download artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: artifact-test
+        path: ./
+    - name: check
+      run: cat hello.txt
+
+ 
+

@@ -1,0 +1,46 @@
+# 자주 사용되는 데이터를 빠르게 불러올 수 있도록 저장하는 기능
+# 의존성 설치 시간 단축
+# 깃헙 마켓플레이스에 정의된 공식 액션
+
+
+name: cache
+on:
+  push:
+    paths:
+    # /** 를 사용하면 my-app 폴더 하위에 모든 파일을 포함한다는 의미
+    - 'my-app/**'
+
+jobs:
+  cache:
+    runs-on: ubuntu-latest
+    steps:
+    # checkout 사용 
+    - name: checkout
+      uses: action/checkout@v4
+    # 18버전의 노드를 install
+    - name: setup-node
+      uses: action/setup-node@v3
+      with:
+        node-version: 18
+    - name: Cache Node.js modules
+      uses: action/cache@v3
+      with:
+        # 캐싱할 경로 > .npm 으로 지정
+        path: ~/.npm
+        # runner.os = github 에서 운영하는 os
+        key: ${{ runner.os }}-node-${{ hash Files('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    # my-app 디렉토리에서 필요한 디펜던시를 설치
+    - name: Install dependencies
+      run: |
+        cd my-app
+        npm ci
+    # my-app 디렉토리에서 build 작업을 실행
+    - name: npm build
+      run: |
+        cd my-app
+        npm run build
+        
+
+

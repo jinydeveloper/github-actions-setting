@@ -18,7 +18,7 @@ jobs:
     # hello.txt 파일을 만들어서 hello-world 단어가 들어가도록
       run: echo hello-world > hello.txt
     - name: upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
       # 이름/경로 지정
         name: artifact-test
@@ -30,7 +30,7 @@ jobs:
     needs: [upload-artifact]
     steps:
     - name: download artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: artifact-test
         path: ./

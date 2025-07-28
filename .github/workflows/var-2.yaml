@@ -24,3 +24,7 @@ jobs:
     steps:
     - name: get var
       run: echo " ${{ vars.level }}"
+
+# github repository settings에서 정의한 환경변수 value 값 수정
+# job > job2
+#  re-run 시 echo " ${{ vars.level }}" 출력값이 수정한 환경변수 value 값으로 확인 가능

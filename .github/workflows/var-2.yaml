@@ -1,0 +1,26 @@
+# 2. 미리 정의
+# 워크플로우 밖에서 정의
+
+# 미리 환경변수를 정의한 후에
+# ${{ vars.<environment-variables> }}
+
+# ex) ${{ vars.LEVEL }}
+
+# 정의된 환경변수를 바꾸면 워크플로우 결과 달라질 수 있음
+
+# 외부에서 환경변수 정의
+# 1. github repository settings에서 사이드에 Secrets and variables 클릭
+# 2. Actions 클릭
+# 3. Actions 화면에서 Variables 탭 > New repository variable 클릭
+# ex) Name에 LEVEL, Value에 job 입력
+
+
+name: var-2
+on: push
+
+jobs:
+  get-var:
+    runs-on: ubuntu-latest
+    steps:
+    - name: get var
+      run: echo " ${{ vars.level }}"

@@ -1,0 +1,62 @@
+# step이나 job에서 사용할 수 있는 환경 변수
+# key-value 형태로 저장
+
+# output과 env 비교
+
+# output: 같은 job, 다른 job 간에 데이터 공유
+# env : 같은 job에서만 데이터 공유
+
+# 구성 방법
+# 1. env 사용
+# 2. 미리 정의
+
+
+# 1. env 사용
+# - 워크플로우 내에서 정의
+#  workflow level, job level, step level
+# 우선순위 : step >> job >> workflow
+# echo "{key}={value}" >> $GITHUB_ENV
+# ex) echo "test=hello" >> $GITHUB_ENV
+#     ${{ env.test }}
+
+name: var-1
+on: push
+
+env:
+  level: workflow
+
+jobs:
+  get-env-1:
+    runs-on: ubuntu-latest
+    steps:
+    - name: check env
+      run: echo "LEVEL ${{ env.level }}"
+  
+  get-env-2:
+    runs-on: ubuntu-latest
+    env:
+      level: job
+    steps:
+    - name: check env
+      run: echo "LEVEL ${{ env.level }}"
+  
+  get-env-3:
+    runs-on: ubuntu-latest
+    env:
+      level: job
+    steps:
+    - name: check env
+      run: echo "LEVEL ${{ env.level }}"
+      env:
+        level: step
+
+  get-env:
+    runs-on: ubuntu-latest
+    steps:
+    - name: create env
+      run: echo "level=job" >> $GITHUB_ENV
+    - name: check env
+      run: echo "LEVEL ${{ env.level }}"
+
+
+ 

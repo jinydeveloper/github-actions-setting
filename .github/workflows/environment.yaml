@@ -1,0 +1,26 @@
+# environment
+# 특정 환경에서만 사용 가능한 환경변수와 시크릿 관리
+# 레포지토리에서 정의할 수 있음
+
+# 환경변수와 시크릿 정의
+# github repository settings에서 사이드에 Secrets and variables - actions 클릭
+# secrets, variables 탭에서 확인 가능
+# organization level, repository level, environment level에서 정의 가능
+
+# 우선순위
+# environment > repo > org
+
+# organization에서 환경변수, 시크릿 설정
+# organization - settings - secrets and variables - actions 클릭
+
+name: environment
+on: push
+
+jobs:
+  get-env:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check env & secret
+        run: |
+          echo ${{ vars.level }}
+          echo ${{ secrets.key }}

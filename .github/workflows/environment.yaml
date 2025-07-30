@@ -24,3 +24,17 @@ jobs:
         run: |
           echo ${{ vars.level }}
           echo ${{ secrets.key }}
+
+# repo에서 환경변수, 시크릿 설정
+# github repository - settings - Environment - New enviroment 클릭
+# Name: dev 입력 - Configure environment 클릭 - new secrets, new variables 버튼 클릭
+
+  get-env-dev:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: check env & secret
+        run: |
+          echo ${{ vars.level }}
+          echo ${{ secrets.key }}
+

@@ -1,0 +1,48 @@
+# 변수 기반으로 여러 job을 실행하는 기능
+# matrix를 사용해서 하나의 잡을 구성하면, 여러 개의 잡을 실행하도록 할 수 있음
+
+# 예시
+# 1. 변수로 window, linux, macOS 설정
+#  - 하나의 잡을 구성해서 러너가 다른 잡을 3개 실행
+#   -- window 러너에서 실행
+#   -- linux 러너에서 실행
+#   -- macOS 러너에서 실행
+
+# 2. 변수로 python3.7 ~ python3.9
+# - 하나의 잡을 구성해서 같은 코드베이스에서 각 버전별로 테스트 구성
+#   -- python3.7에서 실행
+#   -- python3.8에서 실행
+#   -- python3.9에서 실행
+
+# matrix 기능이 없다면
+# - 하나의 잡 구성이 아니라 여러 개의 잡을 구성해야할 수 있음
+
+# matrix 정의
+# - job.strategy.matrix.<변수명>
+
+# matrix 값을 사용하려면
+# - ${{ matrix.<변수명> }}
+
+
+# - job.strategy.matrix.version
+
+# matrix 값을 사용하려면
+# - ${{ matrix.version }}
+
+# 변수의 모든 가능한 조합에 대해 별도의 잡 생성
+
+name: matrix
+on: push
+
+jobs:
+  get-matrix:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        version: [12, 14]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: check matrix
+        run: |
+          echo ${{ matrix.os }}
+          echo ${{ matrix.version }}

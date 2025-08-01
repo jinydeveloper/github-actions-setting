@@ -1,0 +1,60 @@
+# 문자열 처리 함수
+# 잡 또는 스텝의 실행 여부 결정
+
+# startsWith 함수 : 두번째 인자가 첫번째 인자로 시작하는지 확인
+# startsWith( searchString, searchValue )
+
+# 예
+# startsWith( 'github actions', 'git' )
+# return true
+
+# startsWith( 'github actions', 'test' )
+# return false
+
+# endsWith 함수 : 두번째 인자가 첫번째 인자로 시작하는지 확인
+# startsWith( searchString, searchValue )
+
+# 예
+# endsWith( 'github actions', 'ions' )
+# return true
+
+# endsWith( 'github actions', 'test' )
+# return false
+
+# contains 함수 : 두번째 인자가 첫번째 인자에 포함되어 있는지 확인
+# contains(search, item) 
+
+# 예
+# contains( 'github actions', 'act' )
+# return true
+
+# contains( 'github, actions', 'git' )
+# return true
+
+name: string-function
+on: push
+
+jobs:
+  string-function:
+    runs-on: ubuntu-latest
+    steps:
+      - name: startswith
+        if: startsWith('github actions', 'git')
+        run: echo "git"
+      - name: startswith
+        if: startsWith('github actions', 'test')
+        run: echo "test"
+
+      - name: endswith
+        if: endsWith('github actions', 'icons')
+        run: echo "icons"
+      - name: endswith
+        if: endsWith('github actions', 'test')
+        run: echo "test"
+
+      - name: contains
+        if: contains('github actions', 'act')
+        run: echo "contains act"
+      - name: contains
+        if: contains('github actions', 'git')
+        run: echo "contains git"

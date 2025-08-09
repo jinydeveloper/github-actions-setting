@@ -1,4 +1,4 @@
-<!-- 시나리오 4개
+시나리오 4개
 - 간단한 시나리오에서 시작해서 요구사항을 추가
 - 각 시나리오의 깃헙액션 워크플로우
 -- 단순한 구성 ~ 복잡한 구성
@@ -158,4 +158,18 @@ branch
 -- aws action
 -- kubectl action
 -- helm action
--- slack action -->
+-- slack action
+
+------------------------------
+AWS 적용하기
+
+1. 각 시나리오마다 aws 환경 구성은 동일
+2. 시나리오에 따라 달라지는 점
+- ecr 레포지토리 생성
+
+[작업과정]
+- Github OIDC 설정
+- AWS IAM Role 생성
+-- github actions
+-- cloud 9
+- AWS ECR 생성

@@ -1,0 +1,253 @@
+# 복습
+# 1. 시나리오 1: 개발 환경을 위한 CICD
+# 2. 시나리오 2: 개발 & 운영 환경을 위한 CICD
+
+# 시나리오 3
+
+# - 가정: 개발 환경과 QA, 운영 환경의 CICD 구성
+
+# - branch
+# -- dev: 개발 환경
+# -- master: 운영 환경
+
+# - QA이란?
+# - 테스트를 통해 소프트웨어 결함을 식별
+# - 식별된 결함 수정을 통해 품질을 향상
+
+# 배포 순서
+# 1. 개발 환경(dev branch)
+# 2. QA 환경
+# 3. 운영 환경(master branch)
+
+# 요구사항
+# 1. 특정 path에 대해서만 실행(my-app)
+# 2. dev, master branch로 PR이 생성&동기화 될 때 테스트 작업 실행(CI)
+# 3. PR이 dev branch로 머지되면, 이미지 빌드하고 개발 환경에 배포(CD)
+# 4. PR이 master branch로 머지되면, 이미지 빌드하고 운영 환경에 배포(CD)
+# 5. 배포 성공 여부 슬랙으로 전송
+# 6. 필요한 시점에 QA 환경에 배포(CD)
+
+# [브랜치를 사용하는 경우]
+# - 새로운 커밋이 추가될 때마다, 커밋 히스토리 업데이트
+
+# [태그를 사용하는 경우]
+# - 태그는 특정 커밋에 라벨링하므로 그 값이 변하지 않음
+# - 롤백을 고려
+# -- 특정 커밋(abcd)에 v1.0.0 이라는 태그를 붙였다면 v1.0.0 태그는 특정 커밋(abcd)을 명확하게 참조
+
+# **예시
+# - 현재 버전: v2.0.0일 때
+# -- 안정적인 v1.0.0 버전으로 롤백해야 한다면
+# -- v1.0.0 태그가 붙은 커밋을 기준으로 롤백을 진행
+
+# -> 태그 이벤트를 사용해서 QA 환경 배포
+# ---------------------------------------------------
+# 워크플로우 구성
+
+# 1. 트리거 구성
+# - path filter : my-app
+# - branch filter : dev, master
+# - github event : pull_request, push
+# - tag filter: Vx.y.z
+# -- v1.0.0 (0) / 1.0.0 (x) 
+
+# 2. 잡 구성 > cicd-2 와 동일, set-environment + create-pr 일부 수정
+# 1. build
+
+# 2. set-environment
+# - 현재 배포 환경 판단
+# - dev branch로 머지되면 개발 환경(dev)
+# - master branch로 머지되면 운영 환경(prod)
+# - 태그 (Vx.y.z)로 Push하면, QA 환경(qa)
+# - 아웃풋 구성(set-env)
+
+# 3. image-build
+
+# 4. deploy
+
+# 5. create-pr
+# - 검증된 QA 환경의 코드를 운영 환경으로 반영하기 위해 PR 생성
+# - QA 환경 배포에 성공하면, release/tag 브랜치 생성
+# - release 브랜치에서 master branch로 PR 생성
+# - 개발 환경 배포에 성공한 다음, QA배포를 원할 때 태그
+#   1) QA배포를 진행
+#   2) QA배포에 성공했다면, 그 시점의 릴리즈 브랜치 생성
+#     - QA환경 배포에 성공한 커밋 히스토리
+#   3) 릴리즈 브랜치 - master branch 사이에 PR 생성
+#   4) 이 PR 머지하면 운영 환경으로 배포
+
+# 해야하는 작업
+# - Update github event : push
+# - Add tag filter : Vx.y.z
+# - Update job : set-environment, create-pr
+
+name: cicd-3
+on:
+  push:
+    paths:
+    - 'my-app/**'
+    tag:
+    - 'v[0-9]+.[0-9]+.[0-9]+'
+
+  pull_request:
+    types: [opened, synchronize, closed]
+    # cicd-1 파일에서 master만 추가
+    branches: [dev, master]
+    paths:
+      - 'my-app/**'
+
+jobs:
+  test:
+    if: github.event.action == 'opened' || github.event.action == 'synchronize'
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    - name: setup-node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+    - name: Cache Node.js modules
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/pacage-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - name: Install dependencies
+      run: |
+        cd my-app
+        npm ci
+    - name: npm build
+      run: |
+        cd my-app
+        npm run build
+  
+  set-environment:
+    if: github.event.pull_request.merged == true || github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }}
+    steps:
+    - name: set env
+      id: set-env
+      # github.base_ref = target branch 의미
+      run: |
+        if [[ ${{ github.ref_type }} == "tag" ]]; then
+          echo "environment=qa" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+
+        if [[ ${{ github.ref_type }} == "branch" ]]; then
+          echo "environment=dev" >> $GITHUB_OUTPUT
+          if [[ ${{ github.base_ref }} == "master" ]]; then
+            echo "environment=prod" >> $GITHUB_OUTPUT
+          fi
+        fi
+    - name: check env
+      run: echo ${{ steps.set-env.outputs.environment }}
+
+  image-build:
+    runs-on: ubuntu-latest
+    needs: [set-environment]
+    permissions:
+      id-token: write
+      contents: read
+    strategy:
+      matrix:
+        environment: ["${{ needs.set-environment.outputs.environment }}"]
+    environment: ${{ matrix.environment }}
+    steps:
+    - name: checkout the code
+      uses: actions/checkout@v4
+    - name: Configure AWS Credentials
+      id: credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ vars.AWS_REGION }}
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+      with:
+        mask-password: 'true'
+    - name: docker build & push
+      run: |
+        docker build -f Dockerfile --tag ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }} .
+        docker push ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }}
+      # commit을 이미지 태그로 사용 > 버전관리에 용이
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [ set-environment, image-build ]
+    permissions:
+      id-token: write
+      contents: read
+    strategy:
+      matrix:
+        environment: ["${{ needs.set-environment.outputs.environment }}"]
+    environment: ${{ matrix.environment }}
+    steps:
+    - name: checkout the code
+      uses: actions/checkout@v4
+    - name: Configure AWS Credentials
+      id: credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ vars.AWS_REGION }}
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+    - name: setup kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: latest
+    - name: setup helm
+      uses: azure/setup-helm@v3
+      with:
+        version: v3.11.1
+    - name: access kubernetes
+      run: |
+        aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }}
+    - name: deploy
+      id: status
+      run: |
+        helm upgrade --install my-app kubernetes/my-app --create-namespace --namespace my-app-${{ vars.SUFFIX }} \ 
+        --set image.tag=${{ github.sha }} \
+        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}
+    - name: notify
+      if: always()
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        payload: |
+          {
+            "test": "message",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "Environment : ${{ matrix.environment }}, Deploy Result : ${{ steps.status.outcome }}, Repository : ${{ github.repository }}."
+                }
+              }
+            ] 
+          }
+      env:
+        SLACK.WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+ 
+  create-pr:
+    if: needs.set-environment.outputs.environment == 'qa'
+    runs-on: ubuntu-latest
+    needs: [set-environment, deploy]
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    # github 권한을 가져옴
+    - name: gh auth login
+      run: |
+        echo ${{ secrets.PERSONAL_ACCESS_TOKEN }} | gh auth login --with-token
+    - name: create branch
+      run: |
+        git checkout -b release/${{ github.ref_name }}
+        git push origin release/${{ github.ref_name }}
+    - name: create pr
+      run: |
+        gh pr create --base master --head release/${{ github.ref_name }} --title "release/${{ github.ref_name }} -> master" --body "release pr"
